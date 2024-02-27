@@ -1,15 +1,44 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  UseGuards,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
 import { Response } from 'express';
+import { LoginByUsernameFormData, RegistrationFormData } from 'src/interfaces';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/login')
-  loginByUsername(@Body() createAuthDto: CreateAuthDto, @Res() res: Response) {
-    console.log();
-    return res.json(createAuthDto);
+  @Post('registration')
+  async reginstration(
+    @Body() cred: RegistrationFormData,
+    @Res() res: Response,
+  ) {
+    try {
+      const token = await this.authService.registration(cred);
+      res.status(HttpStatus.CREATED).json(token);
+    } catch (error) {
+      res.status(error.getStatus()).json({ message: error.message });
+    }
+  }
+
+  @Post('login/username')
+  @UseGuards(AuthGuard('local'))
+  async loginByUsername(
+    @Body() cred: LoginByUsernameFormData,
+    @Res() res: Response,
+  ) {
+    try {
+      const token = await this.authService.loginByUsername(cred);
+      res.status(HttpStatus.CREATED).json(token);
+    } catch (error) {
+      res.status(error.getStatus()).json({ message: error.message });
+    }
   }
 }
