@@ -34,19 +34,19 @@ export class AuthService {
     return userDto;
   }
 
-  async registration(data: RegistrationFormData): Promise<string> {
+  async registration(userData: RegistrationFormData): Promise<string> {
     const user = await this.userRepository.findOne({
-      where: [{ username: data.username }, { email: data.email }],
+      where: [{ username: userData.username }, { email: userData.email }],
     });
 
     if (user) {
-      if (user.username === data.username)
+      if (user.username === userData.username)
         throw new HttpException(
           'Пользователь с таким никнеймом уже существует',
           HttpStatus.CONFLICT,
         );
 
-      if (user.email === data.email)
+      if (user.email === userData.email)
         throw new HttpException(
           'Пользователь с таким email уже существует',
           HttpStatus.CONFLICT,
@@ -54,9 +54,9 @@ export class AuthService {
     }
 
     let newUser = new User();
-    const hashPass = await bcrypt.hash(data.password, 10);
+    const hashPass = await bcrypt.hash(userData.password, 10);
 
-    newUser = Object.assign(newUser, data);
+    newUser = Object.assign(newUser, userData);
 
     newUser.password = hashPass;
     const savedUser = await this.userRepository.save(newUser);

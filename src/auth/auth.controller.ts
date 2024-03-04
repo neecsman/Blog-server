@@ -17,11 +17,11 @@ export class AuthController {
 
   @Post('registration')
   async reginstration(
-    @Body() cred: RegistrationFormData,
+    @Body() userData: RegistrationFormData,
     @Res() res: Response,
   ) {
     try {
-      const token = await this.authService.registration(cred);
+      const token = await this.authService.registration(userData);
       res.status(HttpStatus.CREATED).json(token);
     } catch (error) {
       res.status(error.getStatus()).json({ message: error.message });
