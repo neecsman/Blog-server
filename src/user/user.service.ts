@@ -10,7 +10,10 @@ export class UserService {
   ) {}
 
   async findOne(username: string) {
-    const user = await this.userRepository.findOne({ where: { username } });
+    const user = await this.userRepository.findOne({
+      where: { username },
+      relations: { birthday: true },
+    });
     return user;
   }
 }

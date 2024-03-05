@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Country, Currency } from '../types/user';
+import { Birthday } from './birthday.entity';
 
 @Entity()
 export class User {
@@ -10,24 +17,24 @@ export class User {
   username: string;
 
   @Column({ default: '' })
-  firstName: string;
+  firstname: string;
 
   @Column({ default: '' })
-  lastName: string;
+  lastname: string;
 
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  gender: string;
 
   @Column()
   email: string;
 
-  @Column({ nullable: true })
-  age: number;
+  @Column()
+  password: string;
 
-  @Column({ default: 'RUB' })
+  @Column({ default: Currency.RUB })
   currency: Currency;
 
-  @Column({ default: '' })
+  @Column({ default: Country.Russia })
   country: Country;
 
   @Column({ default: '' })
@@ -35,4 +42,8 @@ export class User {
 
   @Column({ default: '' })
   avatar: string;
+
+  @OneToOne(() => Birthday)
+  @JoinColumn()
+  birthday: Birthday;
 }

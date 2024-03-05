@@ -7,11 +7,14 @@ import { UserDto } from 'src/user/dto/user.dto';
 import { LoginByUsernameFormData, RegistrationFormData } from 'src/interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Birthday } from 'src/user/entities/birthday.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Birthday)
+    private birthdayRepository: Repository<Birthday>,
     private usersService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -54,10 +57,17 @@ export class AuthService {
     }
 
     let newUser = new User();
+    let newBirthday = new Birthday();
+
     const hashPass = await bcrypt.hash(userData.password, 10);
 
-    newUser = Object.assign(newUser, userData);
+    const { birthday, ...otheUserData } = userData;
 
+    newBirthday = Object.assign(newBirthday, birthday);
+    const savedBirthday = await this.birthdayRepository.save(newBirthday);
+
+    newUser = Object.assign(newUser, otheUserData);
+    newUser.birthday = savedBirthday;
     newUser.password = hashPass;
     const savedUser = await this.userRepository.save(newUser);
 

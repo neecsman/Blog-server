@@ -14,7 +14,7 @@ export class UserController {
   // @UseGuards(JwtAuthGuard)
   @Get('profile')
   async profile(@Req() req: RequestWithUser, @Res() res: Response) {
-    const user = await this.userService.findOne('Neecsman');
+    const user = await this.userService.findOne('neecsman');
     // const userDto = new UserDto(user);
 
     return res.json(user);

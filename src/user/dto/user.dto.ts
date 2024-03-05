@@ -11,7 +11,7 @@ export class UserDto {
     this.id = user.id;
     this.username = user.username;
     this.email = user.email;
-    this.firstname = user.firstName;
-    this.lastname = user.lastName;
+    this.firstname = user.firstname;
+    this.lastname = user.lastname;
   }
 }
