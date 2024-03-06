@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
@@ -19,5 +19,18 @@ export class UserController {
 
     return res.json(user);
     // return res.json(req.user);
+  }
+
+  @Put('profile')
+  async editProfile(@Req() req: RequestWithUser, @Res() res: Response) {
+    console.log(req.body);
+
+    const profile = await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(req.body);
+      }, 3000);
+    });
+
+    return res.json(profile);
   }
 }
