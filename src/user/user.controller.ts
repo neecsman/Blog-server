@@ -11,7 +11,7 @@ interface RequestWithUser extends Request {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async profile(@Req() req: RequestWithUser, @Res() res: Response) {
     const user = await this.userService.findOne('neecsman');
@@ -21,6 +21,7 @@ export class UserController {
     // return res.json(req.user);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('profile')
   async editProfile(@Req() req: RequestWithUser, @Res() res: Response) {
     console.log(req.body);
