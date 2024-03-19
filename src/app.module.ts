@@ -7,6 +7,12 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { Birthday } from './user/entities/birthday.entity';
+import { ArticleModule } from './article/article.module';
+import { CommentsModule } from './comments/comments.module';
+import { Article } from './article/entities/article.entity';
+import { ArticleTags } from './article/entities/articleTags.entity';
+import { ArticleBlock } from './article/entities/articleBlock.entity';
+import { Comment } from './comments/entities/comment.entity';
 
 @Module({
   imports: [
@@ -21,12 +27,16 @@ import { Birthday } from './user/entities/birthday.entity';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Birthday],
+      entities: [User, Birthday, Article, ArticleTags, ArticleBlock, Comment],
       synchronize: true,
     }),
     AuthModule,
+    ArticleModule,
+    CommentsModule,
     BlogModule,
     UserModule,
+    ArticleModule,
+    CommentsModule,
   ],
   controllers: [],
   providers: [],
