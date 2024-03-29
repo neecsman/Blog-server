@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { BlogModule } from './blog/blog.module';
 import { UserModule } from './user/user.module';
@@ -40,8 +40,6 @@ import { ArticleTextBlockParagraph } from './article/entities/articleBlockParagr
       synchronize: true,
     }),
     AuthModule,
-    ArticleModule,
-    CommentsModule,
     BlogModule,
     UserModule,
     ArticleModule,

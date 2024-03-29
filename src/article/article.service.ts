@@ -121,6 +121,8 @@ export class ArticleService {
         .leftJoinAndSelect('article.tags', 'tag')
         .leftJoinAndSelect('article.blocks', 'block')
         .leftJoinAndSelect('block.paragraphs', 'paragraph')
+        .leftJoinAndSelect('article.comments', 'comments')
+        .leftJoinAndSelect('comments.user', 'user')
         .where('article.id = :id', { id })
         .orderBy('block.id', 'ASC')
         .getOne();

@@ -34,3 +34,9 @@ export interface LoginByUsernameFormData {
   username: string;
   password: string;
 }
+
+export interface CreateCommentData {
+  articleId: number;
+  userId: number;
+  text: string;
+}
