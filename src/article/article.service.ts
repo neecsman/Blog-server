@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { ArticleBlock } from './entities/articleBlock.entity';
 
 import { ArticleTags, ArticleTagsType } from './entities/articleTags.entity';
+import { ArticleTextBlockParagraph } from './entities/articleBlockParagraph.entity';
 
 @Injectable()
 export class ArticleService {
@@ -14,6 +15,8 @@ export class ArticleService {
     @InjectRepository(Article) private articleRepository: Repository<Article>,
     @InjectRepository(ArticleBlock)
     private articleBlockRepository: Repository<ArticleBlock>,
+    @InjectRepository(ArticleTextBlockParagraph)
+    private articleTextBlockParagraphsRepository: Repository<ArticleTextBlockParagraph>,
     @InjectRepository(ArticleTags)
     private articleTagsRepository: Repository<ArticleTags>,
   ) {}
@@ -43,8 +46,29 @@ export class ArticleService {
             const textBlock = new ArticleBlock();
             textBlock.type = blockData.type;
             textBlock.title = blockData.title;
-            textBlock.paragraph = blockData.paragraph;
-            textBlock.article = savedArticle;
+
+            const savedTextBlock = await this.articleBlockRepository.save(
+              textBlock,
+            );
+
+            let paragraphs: ArticleTextBlockParagraph[] = [];
+
+            textBlock.paragraphs = blockData.paragraphs.map(
+              async (paragraph: string) => {
+                const newParagraph = new ArticleTextBlockParagraph();
+                newParagraph.text = paragraph;
+                newParagraph.articleTextBlock = savedTextBlock;
+                const savedParagraph =
+                  await this.articleTextBlockParagraphsRepository.save(
+                    newParagraph,
+                  );
+
+                paragraphs.push(savedParagraph);
+              },
+            );
+
+            savedTextBlock.article = savedArticle;
+            savedTextBlock.paragraphs = paragraphs;
             block = await this.articleBlockRepository.save(textBlock);
             break;
           case 'CODE':
@@ -96,8 +120,13 @@ export class ArticleService {
         .createQueryBuilder('article')
         .leftJoinAndSelect('article.tags', 'tag')
         .leftJoinAndSelect('article.blocks', 'block')
+        .leftJoinAndSelect('block.paragraphs', 'paragraph')
         .where('article.id = :id', { id })
+        .orderBy('block.id', 'ASC')
         .getOne();
+
+      if (!article)
+        throw new HttpException('Article not found', HttpStatus.NOT_FOUND);
 
       const formattedBlocks: ArticleBlock[] = article.blocks
         .map((block) => {
@@ -107,7 +136,7 @@ export class ArticleService {
                 id: block.id,
                 type: block.type,
                 title: block.title,
-                paragraph: block.paragraph,
+                paragraphs: block.paragraphs,
               };
             case 'CODE':
               return {

@@ -6,9 +6,17 @@ import { Article } from './entities/article.entity';
 import { ArticleBlock } from './entities/articleBlock.entity';
 
 import { ArticleTags } from './entities/articleTags.entity';
+import { ArticleTextBlockParagraph } from './entities/articleBlockParagraph.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Article, ArticleBlock, ArticleTags])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Article,
+      ArticleBlock,
+      ArticleTags,
+      ArticleTextBlockParagraph,
+    ]),
+  ],
   controllers: [ArticleController],
   providers: [ArticleService],
 })

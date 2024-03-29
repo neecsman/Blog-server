@@ -13,6 +13,7 @@ import { Article } from './article/entities/article.entity';
 import { ArticleTags } from './article/entities/articleTags.entity';
 import { ArticleBlock } from './article/entities/articleBlock.entity';
 import { Comment } from './comments/entities/comment.entity';
+import { ArticleTextBlockParagraph } from './article/entities/articleBlockParagraph.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,15 @@ import { Comment } from './comments/entities/comment.entity';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Birthday, Article, ArticleTags, ArticleBlock, Comment],
+      entities: [
+        User,
+        Birthday,
+        Article,
+        ArticleTags,
+        ArticleBlock,
+        ArticleTextBlockParagraph,
+        Comment,
+      ],
       synchronize: true,
     }),
     AuthModule,

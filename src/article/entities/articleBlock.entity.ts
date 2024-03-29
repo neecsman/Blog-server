@@ -3,9 +3,11 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Article } from './article.entity';
+import { ArticleTextBlockParagraph } from './articleBlockParagraph.entity';
 
 export enum BlockType {
   TEXT = 'TEXT',
@@ -25,9 +27,6 @@ export class ArticleBlock {
   title?: string;
 
   @Column({ nullable: true })
-  paragraph?: string;
-
-  @Column({ nullable: true })
   code?: string;
 
   @Column({ nullable: true })
@@ -35,4 +34,10 @@ export class ArticleBlock {
 
   @ManyToOne(() => Article, (article) => article.blocks)
   article?: Article;
+
+  @OneToMany(
+    () => ArticleTextBlockParagraph,
+    (paragraphs) => paragraphs.articleTextBlock,
+  )
+  paragraphs?: ArticleTextBlockParagraph[];
 }
