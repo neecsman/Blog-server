@@ -41,12 +41,14 @@ export class CommentsService {
     }
   }
 
-  findAll() {
-    return `This action returns all comments`;
-  }
+  findAllByArticleId(articleId: number) {
+    if (!articleId) throw new NotFoundException();
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+    const comments = this.commentsRepository.find({
+      where: { article: { id: articleId } },
+      relations: { user: true },
+    });
+    return comments;
   }
 
   update(id: number, updateCommentDto) {
