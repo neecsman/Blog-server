@@ -35,8 +35,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     try {
-      const token = await this.authService.loginByUsername(cred);
-      res.status(HttpStatus.CREATED).json(token);
+      const user = await this.authService.loginByUsername(cred);
+      res.status(HttpStatus.CREATED).json(user);
     } catch (error) {
       res.status(error.getStatus()).json({ message: error.message });
     }

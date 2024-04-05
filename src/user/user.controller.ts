@@ -1,4 +1,13 @@
-import { Controller, Get, Put, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Put,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
@@ -19,6 +28,13 @@ export class UserController {
 
     return res.json(user);
     // return res.json(req.user);
+  }
+
+  @Get()
+  async profileById(@Query('userId') id: string, @Res() res: Response) {
+    const user = await this.userService.getUserById(+id);
+
+    return res.json(user);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -22,8 +22,6 @@ export class CommentsController {
 
   @Get()
   findAll(@Query('articleId') articleId: number) {
-    console.log(articleId);
-
     return this.commentsService.findAllByArticleId(articleId);
   }
 }
