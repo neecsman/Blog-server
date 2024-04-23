@@ -7,6 +7,7 @@ import { ArticleBlock } from './entities/articleBlock.entity';
 
 import { ArticleTags } from './entities/articleTags.entity';
 import { ArticleTextBlockParagraph } from './entities/articleBlockParagraph.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ArticleTextBlockParagraph } from './entities/articleBlockParagraph.enti
       ArticleBlock,
       ArticleTags,
       ArticleTextBlockParagraph,
+      User,
     ]),
   ],
   controllers: [ArticleController],

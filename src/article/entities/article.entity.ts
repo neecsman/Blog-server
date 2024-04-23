@@ -7,10 +7,12 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { ArticleBlock } from './articleBlock.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { ArticleTags } from './articleTags.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class Article {
@@ -34,6 +36,10 @@ export class Article {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => User, (user) => user.articles)
+  @JoinTable()
+  author: User;
 
   @ManyToMany(() => ArticleTags)
   @JoinTable()

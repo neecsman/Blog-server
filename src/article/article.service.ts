@@ -8,6 +8,7 @@ import { ArticleBlock } from './entities/articleBlock.entity';
 
 import { ArticleTags, ArticleTagsType } from './entities/articleTags.entity';
 import { ArticleTextBlockParagraph } from './entities/articleBlockParagraph.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ArticleService {
@@ -19,15 +20,24 @@ export class ArticleService {
     private articleTextBlockParagraphsRepository: Repository<ArticleTextBlockParagraph>,
     @InjectRepository(ArticleTags)
     private articleTagsRepository: Repository<ArticleTags>,
+    @InjectRepository(User) private userService: Repository<User>,
   ) {}
 
   async create(articleData) {
     try {
       const article = new Article();
+      const user = await this.userService.findOneBy({ id: articleData.userId });
+
+      if (!user)
+        throw new HttpException(
+          'Пользователь не неайден',
+          HttpStatus.UNAUTHORIZED,
+        );
 
       article.title = articleData.title;
       article.subtitle = articleData.subtitle;
       article.img = articleData.img;
+      article.author = user;
 
       const savedArticle = await this.articleRepository.save(article);
 
@@ -110,14 +120,25 @@ export class ArticleService {
     return 'This action adds a new article';
   }
 
-  findAll() {
-    return `This action returns all article`;
+  async findAll() {
+    const articles = await this.articleRepository
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.author', 'author')
+      .leftJoinAndSelect('article.tags', 'tag')
+      .leftJoinAndSelect('article.blocks', 'block')
+      .leftJoinAndSelect('block.paragraphs', 'paragraph')
+      .leftJoinAndSelect('article.comments', 'comments')
+      .leftJoinAndSelect('comments.user', 'user')
+      .orderBy('block.id', 'ASC')
+      .getMany();
+    return articles;
   }
 
   async findOne(id: number) {
     try {
       const article = await this.articleRepository
         .createQueryBuilder('article')
+        .leftJoinAndSelect('article.author', 'author')
         .leftJoinAndSelect('article.tags', 'tag')
         .leftJoinAndSelect('article.blocks', 'block')
         .leftJoinAndSelect('block.paragraphs', 'paragraph')

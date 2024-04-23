@@ -4,9 +4,11 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Country, Currency } from '../types/user';
 import { Birthday } from './birthday.entity';
+import { Article } from 'src/article/entities/article.entity';
 
 @Entity()
 export class User {
@@ -46,4 +48,7 @@ export class User {
   @OneToOne(() => Birthday)
   @JoinColumn()
   birthday: Birthday;
+
+  @OneToMany(() => Article, (article) => article.author)
+  articles: Article[];
 }
