@@ -120,7 +120,20 @@ export class ArticleService {
     return 'This action adds a new article';
   }
 
-  async findAll() {
+  async findAll(queryParams: { page: number; limit: number }) {
+    console.log(queryParams);
+
+    const total = await this.articleRepository
+      .createQueryBuilder('article')
+      .getCount();
+
+    const subQuery = this.articleRepository
+      .createQueryBuilder('article')
+      .select('article.id')
+      .orderBy('article.id', 'ASC')
+      .skip((queryParams.page - 1) * queryParams.limit)
+      .take(queryParams.limit);
+
     const articles = await this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.author', 'author')
@@ -129,9 +142,11 @@ export class ArticleService {
       .leftJoinAndSelect('block.paragraphs', 'paragraph')
       .leftJoinAndSelect('article.comments', 'comments')
       .leftJoinAndSelect('comments.user', 'user')
+      .where('article.id IN (' + subQuery.getQuery() + ')')
       .orderBy('block.id', 'ASC')
       .getMany();
-    return articles;
+
+    return { articles, total };
   }
 
   async findOne(id: number) {
